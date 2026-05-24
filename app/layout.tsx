@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Script from 'next/script';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,16 +31,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {/* --- MONETAG ADS SCRIPT (LAZY LOADED FOR AWWWARDS LEVEL PERFORMANCE) --- */}
-        <Script
-          src="https://al5sm.com/tag.min.js"
-          data-zone="11049765"
-          strategy="lazyOnload"
+      <head>
+        {/* --- MONETAG EXACT SCRIPT (FOR BOT VERIFICATION) --- */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(s){s.dataset.zone='11049765',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`,
+          }}
         />
-        
-        {children}
-      </body>
+      </head>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
