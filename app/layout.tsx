@@ -39,7 +39,29 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+    {/* 🎬 Ecosystem Banner - PC Optimizer (DARK GLASSMORPHISM) */}
+    <div className="w-full bg-[#050505]/80 backdrop-blur-xl border-b border-red-500/30 z-[100] relative">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-center gap-3">
+            {/* Live Pulsing Dot */}
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
+            </span>
+            <p className="text-xs sm:text-sm font-medium text-gray-200 flex flex-wrap items-center justify-center gap-1.5">
+              Need 4K Game Clips for your Edits? 
+              <a 
+                href="https://yt-downloader-pro-teal.vercel.app" 
+                target="_blank" 
+                rel="noreferrer"
+                className="text-red-500 hover:text-red-400 underline underline-offset-4 transition-colors font-bold flex items-center gap-1"
+              >
+                Use my secret Next-Gen YT-Downloader 🎥
+              </a>
+            </p>
+          </div>
+        </div>
+        {children}</body>
     </html>
   );
 }
