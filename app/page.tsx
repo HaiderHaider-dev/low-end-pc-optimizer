@@ -12,7 +12,6 @@ type FormData = {
   resolution: string; 
   emulator: string;
   game: string;
-  // Custom Overrides (Optional)
   customRam: string;
   customDpi: string;
   customResolution: string;
@@ -31,10 +30,10 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cursorGlowRef = useRef<HTMLDivElement>(null);
 
-  // --- State Management (Hybrid Defaults) ---
+  // --- State Management (Upgraded Defaults) ---
   const [formData, setFormData] = useState<FormData>({
-    cpu: "i5-old",
-    gpu: "gt-730",
+    cpu: "i5_mid",
+    gpu: "mid_1",
     ramSize: "none", 
     resolution: "none", 
     emulator: "memu",
@@ -46,7 +45,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [results, setResults] = useState<ResultData>(null);
 
-  // --- GSAP Mouse Follower (The Glow Effect) ---
+  // --- GSAP Mouse Follower ---
   useGSAP(() => {
     const xTo = gsap.quickTo(cursorGlowRef.current, "x", { duration: 0.6, ease: "power3.out" });
     const yTo = gsap.quickTo(cursorGlowRef.current, "y", { duration: 0.6, ease: "power3.out" });
@@ -79,83 +78,92 @@ export default function Home() {
     if (results) setResults(null); 
   };
 
-  // --- THE BRAIN: DYNAMIC HYBRID ENGINE v7.0 (Perfect Medium Math) ---
+  // --- THE BRAIN: DYNAMIC ENGINE v8.0 (Extreme Tier Physics) ---
   const calculateSettings = () => {
     setIsGenerating(true);
     setResults(null);
 
     setTimeout(() => {
-      const lowEndGpus = ["gt-730", "intel-hd", "intel-uhd", "amd-vega", "gt-1030", "r7"];
-      const midTierGpus = ["gtx-750ti", "gtx-1050ti", "gtx-1650", "rx-570"];
-
+      // Hardware Classification
+      const lowEndGpus = ["none", "low"];
+      const midTierGpus = ["mid_1", "mid_2"];
+      
       let gpuScore = lowEndGpus.includes(formData.gpu) ? 1 : midTierGpus.includes(formData.gpu) ? 2 : 3;
       let calcTips: string[] = ["Pro Tip: Use a clean mousepad for best tracking consistency."];
 
-      // 1. HYBRID RAM ALLOCATION
+      // 1. SMART RAM ALLOCATION (Based on GPU Score)
       let calcRam = "";
       if (formData.customRam.trim() !== "") {
         let numericRam = parseFloat(formData.customRam);
         if (!isNaN(numericRam) && numericRam > 0) {
-          let allocatedMb = Math.round((numericRam * 1024) / 2); // Allocate half the RAM safely
+          let allocatedMb = Math.round((numericRam * 1024) / 2); 
           calcRam = `${allocatedMb} MB (Custom Optimized)`;
           if (numericRam <= 4) calcTips.push("WARNING: Low custom RAM. Close background apps.");
         } else {
-          calcRam = "4096 MB (Fallback)";
+          calcRam = gpuScore === 3 ? "8192 MB (Fallback)" : "4096 MB (Fallback)";
         }
       } else {
         if (formData.ramSize === "4gb") {
-          calcRam = "1536 MB - 2048 MB (Max)";
-          calcTips.push("WARNING: You only have 4GB RAM. Close other apps before playing!");
+          calcRam = "2048 MB (Max Allowed)";
+          calcTips.push("WARNING: 4GB RAM is very low. Enable 'Memory Purge' in emulator.");
         } else if (formData.ramSize === "8gb") {
           calcRam = "4096 MB (Optimal)";
         } else if (formData.ramSize === "16gb" || formData.ramSize === "32gb") {
-          calcRam = "4096 MB - 8192 MB (Maximum)";
+          calcRam = gpuScore === 3 ? "8192 MB (Maximum Performance)" : "4096 MB (Stable Limit)";
         } else if (formData.ramSize === "none") {
-          calcRam = "4096 MB (Default Fallback)";
+          // Auto-calculate if user selects 'none'
+          calcRam = gpuScore === 3 ? "8192 MB (Auto-Beast)" : gpuScore === 2 ? "4096 MB (Auto-Mid)" : "2048 MB (Auto-Low)";
         }
       }
 
-      // 2. RENDER ENGINE LOGIC
-      let calcEngine = gpuScore >= 2 ? "OpenGL (Best for Dedicated GPUs)" : "DirectX (Smoother for Older/Integrated GPUs)";
-      if (gpuScore >= 2) calcTips.push("Enable 'Prefer Dedicated GPU' in emulator settings.");
-      else calcTips.push("Lower in-game graphics to 'Smooth' to avoid frame drops.");
+      // 2. RENDER ENGINE LOGIC (Extreme scaling)
+      let calcEngine = "";
+      if (gpuScore === 3) {
+        calcEngine = "Vulkan / OpenGL+ (Beast Mode)";
+        calcTips.push("Extreme PC: Turn on 'Enable High Frame Rates' (90/120 FPS).");
+      } else if (gpuScore === 2) {
+        calcEngine = "OpenGL (Best for Dedicated GPUs)";
+        calcTips.push("Enable 'Prefer Dedicated GPU' in emulator settings.");
+      } else {
+        calcEngine = "DirectX (Smoother for Low-End)";
+        calcTips.push("Lower in-game graphics to 'Smooth' to avoid frame drops.");
+      }
 
       // 3. HYBRID RESOLUTION & DPI LOGIC
       let calcDpi = 240;
       let baseResolution = "720p";
 
-      // Fix for "1280x720" texts
       if (formData.customResolution.trim() !== "") {
         let resString = formData.customResolution.toLowerCase();
         if (resString.includes("1080")) baseResolution = "1080p";
         else if (resString.includes("900")) baseResolution = "900p";
         else baseResolution = "720p";
       } else {
-        if (formData.resolution === "none") baseResolution = "720p";
-        else baseResolution = formData.resolution;
+        if (formData.resolution === "none") {
+          baseResolution = gpuScore === 3 ? "1080p" : gpuScore === 2 ? "900p" : "720p";
+        } else {
+          baseResolution = formData.resolution;
+        }
       }
 
       if (formData.customDpi.trim() !== "") {
         let numericDpi = parseInt(formData.customDpi);
-        if (!isNaN(numericDpi) && numericDpi > 0) {
-          calcDpi = numericDpi; 
-        }
+        if (!isNaN(numericDpi) && numericDpi > 0) calcDpi = numericDpi; 
       } else {
-        if (gpuScore === 1) calcDpi = baseResolution === "1080p" ? 320 : 240; 
-        else calcDpi = baseResolution === "1080p" ? 440 : 320; 
+        if (gpuScore === 3) calcDpi = 480;
+        else if (gpuScore === 2) calcDpi = 320;
+        else calcDpi = 240;
       }
 
-      // 4. THE PERFECT MEDIUM MATH (Square Root Curve)
+      // 4. THE EXTREME SENSITIVITY MATH (Square Root Curve)
       let rawSensX = 1.0; 
       let rawSensY = 1.0;
       
-      // These bases are perfect for 240 DPI.
       let baseMultiplierX = formData.game === "freefire" ? 1.4 : 0.9;
       let baseMultiplierY = formData.game === "freefire" ? 1.8 : 1.0; 
 
       if (formData.game === "freefire") calcTips.push("FreeFire: Keep in-game General sensitivity at 95-100.");
       
-      // The Magic Curve: sqrt softens the drop so it doesn't become extremely low
       let dpiScaleFactor = Math.sqrt(240 / calcDpi); 
       
       rawSensX = baseMultiplierX * dpiScaleFactor;
@@ -173,10 +181,8 @@ export default function Home() {
         formattedY = rawSensY.toFixed(2); 
         calcTips.push("BlueStacks: Use tweak '16450' or '21058' for stable aim.");
       } else if (formData.emulator === "memu") {
-        // Multiplier 36 maps perfectly: rawX 1.4 -> ~50%, rawY 1.8 -> ~65% (The sweet spot)
         let percentX = Math.round(rawSensX * 36); 
         let percentY = Math.round(rawSensY * 36);
-        
         formattedX = Math.min(Math.max(percentX, 10), 90) + "%";
         formattedY = Math.min(Math.max(percentY, 10), 95) + "%";
         calcTips.push("MEmu: Drag the keymapping sliders exactly to these percentages.");
@@ -204,22 +210,19 @@ export default function Home() {
       ref={containerRef} 
       className="min-h-screen bg-neutral-950 text-white selection:bg-emerald-500 selection:text-neutral-900 relative overflow-x-hidden pb-24"
     >
-      {/* MOUSE GLOW */}
       <div 
         ref={cursorGlowRef} 
         className="fixed top-0 left-0 w-[500px] h-[500px] bg-emerald-500/15 rounded-full blur-[120px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-0 hidden md:block"
       ></div>
 
-      {/* Cyberpunk Grid */}
       <div className="fixed inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none z-0"></div>
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-3/4 h-[400px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
-      {/* Content Area */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 pt-24 flex flex-col items-center text-center">
         
         <div className="animate-el inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-semibold mb-8 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          Engine v7.0 Perfect Math
+          Engine v8.0 Extreme Physics
         </div>
 
         <h1 className="animate-el text-5xl md:text-7xl font-black tracking-tighter mb-6">
@@ -233,7 +236,6 @@ export default function Home() {
           Get the perfect X/Y sensitivity, exact RAM allocation, and Windows tweaks for your exact hardware. Play like a pro, even on a low-end PC.
         </p>
 
-        {/* Master Tool Card */}
         <div className="animate-el w-full max-w-5xl bg-neutral-900/40 backdrop-blur-2xl border border-neutral-800 rounded-3xl p-8 shadow-2xl relative mb-12">
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left mb-10">
@@ -241,39 +243,33 @@ export default function Home() {
             <div className="animate-card-el space-y-2">
               <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Processor (CPU)</label>
               <select name="cpu" value={formData.cpu} onChange={handleInputChange} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-neutral-200 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer">
-                <optgroup label="Low End (Older Gens)">
-                  <option value="core2">Intel Core 2 Duo / Quad</option>
-                  <option value="i3-old">Intel i3 (2nd - 5th Gen)</option>
-                  <option value="i5-old">Intel i5 (2nd - 4th Gen)</option>
-                  <option value="amd-a">AMD A-Series</option>
-                </optgroup>
-                <optgroup label="Mid Range">
-                  <option value="i3-new">Intel i3 (8th Gen+)</option>
-                  <option value="i5-mid">Intel i5 (6th - 9th Gen)</option>
-                  <option value="ryzen-3">AMD Ryzen 3 (Any)</option>
-                </optgroup>
+                <option value="core2duo">Intel Core 2 Duo / Dual Core</option>
+                <option value="i3_low">Intel i3 (1st - 3rd Gen) / AMD A-Series</option>
+                <option value="i5_mid">Intel i5 (2nd - 4th Gen) / Ryzen 3</option>
+                <option value="i7_mid">Intel i7 (3rd - 4th Gen) / Ryzen 5 (Early)</option>
+                <option value="i5_high">Intel i5/i7 (8th - 10th Gen) / Ryzen 3000s</option>
+                <option value="i7_ultra">Intel i7/i9 (11th Gen+) / Ryzen 5000+</option>
+                <option value="extreme">Beast PC (Intel 13th/14th Gen / Ryzen 7000+)</option>
               </select>
             </div>
 
             <div className="animate-card-el space-y-2">
               <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Graphic Card (GPU)</label>
               <select name="gpu" value={formData.gpu} onChange={handleInputChange} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-neutral-200 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer">
-                <optgroup label="Integrated / Very Low">
-                  <option value="intel-hd">Intel HD Graphics</option>
-                  <option value="gt-730">NVIDIA GT 710 / 730</option>
-                </optgroup>
-                <optgroup label="Budget Dedicated">
-                  <option value="gtx-750ti">NVIDIA GTX 750 Ti</option>
-                  <option value="gtx-1050ti">NVIDIA GTX 1050 / Ti</option>
-                  <option value="gtx-1650">NVIDIA GTX 1650</option>
-                </optgroup>
+                <option value="none">Intel HD Graphics / APU (No GPU)</option>
+                <option value="low">NVIDIA GT 710 / 730 / 1030</option>
+                <option value="mid_1">GTX 750 Ti / GTX 1050 Ti / RX 560</option>
+                <option value="mid_2">GTX 1650 / 1660 / RX 570 / RX 580</option>
+                <option value="high">RTX 2060 / 3060 / RX 6600</option>
+                <option value="ultra">RTX 4060 / 4070 / RX 7800</option>
+                <option value="extreme">RTX 4090 / RX 7900 XTX (Monster Level)</option>
               </select>
             </div>
 
             <div className="animate-card-el space-y-2">
               <label className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Total PC RAM (Presets)</label>
               <select name="ramSize" value={formData.ramSize} onChange={handleInputChange} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-neutral-200 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer">
-                <option value="none">None (Use Custom Below)</option>
+                <option value="none">None (Auto Calculate)</option>
                 <option value="4gb">4 GB RAM (Low)</option>
                 <option value="8gb">8 GB RAM (Standard)</option>
                 <option value="16gb">16 GB RAM (Good)</option>
@@ -282,9 +278,9 @@ export default function Home() {
             </div>
 
             <div className="animate-card-el space-y-2">
-              <label className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Screen Resolution (Presets)</label>
+              <label className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Screen Resolution</label>
               <select name="resolution" value={formData.resolution} onChange={handleInputChange} className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3.5 text-neutral-200 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer">
-                <option value="none">None (Use Custom Below)</option>
+                <option value="none">None (Auto Calculate)</option>
                 <option value="720p">720p (1280x720) - Fast</option>
                 <option value="900p">900p (1600x900) - Balanced</option>
                 <option value="1080p">1080p (1920x1080) - HD</option>
@@ -357,7 +353,7 @@ export default function Home() {
               {isGenerating ? (
                 <>
                   <span className="w-5 h-5 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin"></span>
-                  Calculating Hybrid Engine Physics...
+                  Calculating v8.0 Physics...
                 </>
               ) : (
                 "Generate Pro Settings"
