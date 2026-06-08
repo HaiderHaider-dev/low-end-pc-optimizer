@@ -14,9 +14,31 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Low-End PC Optimizer',
-  description: 'Boost your FPS and reduce lag for low-end PCs.',
-  // 👇 Monetag verification tag 👇
+  title: 'Low PC Optimizer - Best Emulator Sensitivity Calculator for Low End PC',
+  description: 'Calculate perfect headshot sensitivity settings for BlueStacks 5, MEmu Play, and SmartGaGa based on your low-end PC specs. Boost FPS and fix emulator lag.',
+  keywords: [
+    "low pc optimizer",
+    "emulator sensitivity calculator",
+    "bluestacks 5 low end pc optimization",
+    "memu play perfect sensitivity settings",
+    "smartgaga best settings 2026",
+    "fix emulator lag windows 10",
+    "free fire emulator sensitivity config",
+    "best dpi and sensitivity for bluestacks",
+    "2gb ram pc gaming optimizer tool",
+    "pubg mobile pc emulator settings"
+  ],
+  openGraph: {
+    title: "Low PC Optimizer - Best Emulator Sensitivity Calculator",
+    description: "Boost your FPS and get perfect headshot sensitivity based on your PC specs.",
+    url: "https://low-end-pc-optimizer.vercel.app/", // 👈 Agar domain change karein toh yahan update kar dena
+    type: "website",
+  },
+  // 👇 Google Search Console Verification Code Field Added
+  verification: {
+    google: "xTcALilC-Bht3vFN-WQQZyJZFTrs8M33Fc2Z1YMv0CA", 
+  },
+  // 👇 Aapka Monetag verification tag bilkul safe hai 👇
   other: {
     monetag: 'b590d3e87395d94b240552f74209c85d',
   },
